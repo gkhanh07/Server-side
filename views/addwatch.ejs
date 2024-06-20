@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm đồng hồ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css">
+</head>
+
+<body>
+    <header>
+        <%- include('partials/header.ejs') -%>
+    </header>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Thêm đồng hồ mới</h1>
+            <form action="/add-watch/create" method="POST">
+                <div class="field">
+                    <label class="label">Tên đồng hồ</label>
+                    <div class="control">
+                        <input class="input is-info" type="text" name="watchName" placeholder="Tên đồng hồ" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Hình ảnh</label>
+                    <div class="control">
+                        <input class="input is-info" type="text" name="image" placeholder="URL hình ảnh" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Giá</label>
+                    <div class="control">
+                        <input class="input is-info" type="number" name="price" placeholder="Giá" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Mô tả đồng hồ</label>
+                    <div class="control">
+                        <textarea class="textarea is-info" name="watchDescription" placeholder="Mô tả đồng hồ"
+                            required></textarea>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="checkbox">
+                        <input type="checkbox" name="Automatic">
+                        Tự động
+                    </label>
+                </div>
+
+                <div class="field">
+                    <label class="label">Thương hiệu</label>
+                    <div class="control">
+                        <div class="select is-info">
+                            <select name="brandName" required>
+                                <% brands.forEach(function(brand) { %>
+                                    <option value="<%= brand._id %>">
+                                        <%= brand.brandName %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-success" type="submit">Thêm đồng hồ</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <%- include('partials/footer.ejs') -%>
+    </footer>
+</body>
+
+</html>

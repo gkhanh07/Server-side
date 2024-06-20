@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Watch Information</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css" />
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <div class="box">
+                <h1 class="title has-text-centered">Edit Watch Information</h1>
+
+
+
+                <form action="/detail/editwatch/<%= watch._id %>" method="post">
+                    <div class="field">
+                        <label class="label">Watch Name</label>
+                        <div class="control">
+                            <input class="input" type="text" name="watchName" value="<%= watch.watchName %>"
+                                placeholder="Watch Name" required />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Image URL</label>
+                        <div class="control">
+                            <input class="input" type="text" name="image" value="<%= watch.image %>"
+                                placeholder="Image URL" required />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Price</label>
+                        <div class="control">
+                            <input class="input" type="text" name="price" value="<%= watch.price %>" placeholder="Price"
+                                required />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Description</label>
+                        <div class="control">
+                            <textarea class="textarea" name="watchDescription" placeholder="Description"
+                                required><%= watch.watchDescription %></textarea>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Brand</label>
+                        <div class="control">
+                            <div class="select is-info">
+                                <select name="brandName" required>
+                                    <% brands.forEach(function(brand) { %>
+                                        <option value="<%= brand._id %>" <%=watch.brand &&
+                                            watch.brand._id.toString()===brand._id.toString() ? 'selected' : '' %>>
+                                            <%= brand.brandName %>
+                                        </option>
+                                        <% }); %>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-primary" type="submit">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

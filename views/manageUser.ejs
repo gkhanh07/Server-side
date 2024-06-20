@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Manage Users</h1>
+
+            <!-- Add User Form -->
+
+            <!-- Search User Form -->
+            <form action="/users/search" method="GET" class="box">
+                <h2 class="subtitle">Search User</h2>
+                <div class="field is-grouped">
+                    <div class="control is-expanded">
+                        <input class="input" type="text" name="query" placeholder="Search for a user">
+                    </div>
+                    <div class="control">
+                        <button type="submit" class="button is-info">Search</button>
+                    </div>
+                </div>
+            </form>
+
+
+            <!-- Users Table -->
+            <table class="table is-fullwidth is-striped">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(function(user) { %>
+                        <tr>
+                            <td>
+                                <%= user.membername %>
+                            </td>
+                            <td>
+                                <% if (user.isAdmin) { %>
+                                    <span class="tag is-success">Admin</span>
+                                    <% } else { %>
+                                        <span class="tag is-danger">User</span>
+                                        <% } %>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <script>
+        // Retain search query value after search
+        document.addEventListener("DOMContentLoaded", function () {
+            const params = new URLSearchParams(window.location.search);
+            const query = params.get('query');
+            if (query) {
+                document.querySelector('input[name="query"]').value = query;
+            }
+        });
+    </script>
+</body>
+
+</html>

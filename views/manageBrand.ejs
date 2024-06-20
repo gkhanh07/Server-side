@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Brands</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Manage Brands</h1>
+
+            <!-- Add Brand Form -->
+            <form action="/add-brand" method="POST" class="box">
+                <div class="field">
+                    <label class="label">Brand Name</label>
+                    <div class="control">
+                        <input class="input" type="text" name="brandName" placeholder="Enter brand name" required>
+                    </div>
+                </div>
+                <div class="control">
+                    <button type="submit" class="button is-primary">Add Brand</button>
+                </div>
+            </form>
+
+            <!-- Search Form -->
+            <form action="/brands/search" method="GET">
+                <div class="field is-grouped">
+                    <div class="control is-expanded">
+                        <input class="input" type="text" id="searchInput" name="query" placeholder="Search for a brand">
+                    </div>
+                    <div class="control">
+                        <button type="submit" class="button is-info">Search</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Brands Table -->
+            <table class="table is-fullwidth is-striped">
+                <thead>
+                    <tr>
+                        <th>Brand Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% brands.forEach(function(brand) { %>
+                        <tr>
+                            <td>
+                                <%= brand.brandName %>
+                            </td>
+                            <td>
+                                <form action="/delete-brand/<%= brand._id %>" method="POST" style="display: inline;">
+                                    <button type="submit" class="button is-danger is-small">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const params = new URLSearchParams(window.location.search);
+            const query = params.get('query');
+            if (query) {
+                document.getElementById('searchInput').value = query;
+            }
+        });
+    </script>
+</body>
+
+</html>

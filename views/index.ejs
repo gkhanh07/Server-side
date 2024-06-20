@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watch Collection</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css">
+</head>
+
+<body>
+  <header>
+    <%- include('partials/header.ejs') -%>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <!-- Combined Search and Filter Form -->
+      <form action="/search" method="GET">
+        <div class="field is-grouped is-grouped-centered">
+          <div class="control is-expanded">
+            <input class="input" type="text" placeholder="Find watch" name="name" value="<%= searchValue %>" />
+          </div>
+          <div class="control">
+            <div class="select">
+              <select name="brandName">
+                <option value="">Select a brand</option>
+                <% brands.forEach(function(brand) { %>
+                  <option value="<%= brand.brandName %>" <%=selectedBrand===brand.brandName ? 'selected' : '' %>><%=
+                      brand.brandName %>
+                  </option>
+                  <% }); %>
+              </select>
+            </div>
+          </div>
+          <div class="control">
+            <button type="submit" class="button is-primary">Search</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Add Watch Button -->
+      <br>
+      <div class="field is-grouped is-grouped-centered">
+        <div class="control">
+          <% if (user && user.isAdmin) { %>
+            <a href="/add-watch" class="button is-success">Add Watch</a>
+            <a href="/managebrand" class="button is-success">Manager Brand</a>
+            <a href="/manageuser" class="button is-success">Manage User</a>
+            <% } %>
+        </div>
+      </div>
+      <br>
+
+      <!-- Watch Cards -->
+      <div class="columns is-multiline">
+        <% if (watches && watches.length> 0) { %>
+          <% watches.forEach(function(watch) { %>
+            <div class="column is-one-quarter">
+              <div class="card">
+                <div class="card-image">
+                  <figure class="image is-4by3">
+                    <img src="<%= watch.image %>" alt="Placeholder image" />
+                  </figure>
+                </div>
+                <div class="card-content">
+                  <div class="media">
+                    <div class="media-content">
+                      <p class="title is-4">
+                        <%= watch.watchName %>
+                      </p>
+                      <p class="subtitle is-6">Price: <%= watch.price %>$</p>
+                    </div>
+                  </div>
+
+                  <div class="content">
+                    <%= watch.watchDescription %>
+                      <br />
+                  </div>
+                  <div class="buttons">
+                    <a href="./detail/<%= watch._id %>">
+                      <button class="button is-primary">View Details</button>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+              <% } else { %>
+                <div class="column is-full has-text-centered">
+                  <p>No watches found matching your search.</p>
+                </div>
+                <% } %>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <%- include('partials/footer.ejs') -%>
+  </footer>
+</body>
+
+</html>

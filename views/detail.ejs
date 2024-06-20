@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Detail</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.1/css/bulma.min.css">
+    <!-- Add any additional stylesheets or scripts here -->
+    <style>
+        .watch-image {
+            width: 500px;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+        }
+
+        .star-rating input[type="radio"] {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover~label,
+        .star-rating input[type="radio"]:checked~label {
+            color: #f5b301;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <%- include('partials/header.ejs') -%>
+    </header>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-6">
+                    <figure>
+                        <img src="<%= watch.image %>" alt="Watch Image" class="watch-image">
+                    </figure>
+                </div>
+
+                <div class="column is-6">
+                    <h1 class="title is-4">
+                        <%= watch.watchName %>
+                    </h1>
+                    <p class="subtitle is-6">
+                        <%= watch.watchDescription %>
+                    </p>
+                    <p><strong>Price:</strong>
+                        <%= watch.price %> $
+                    </p>
+                    <p><strong>Additional Info:</strong>
+                        <%= watch.additionalInfo %>
+                    </p>
+
+                    <% if(user && user.isAdmin===true){%>
+                        <div class="buttons">
+                            <a href="/detail/editwatch/<%= watch._id %>" class="button is-warning">Sửa</a>
+                            <form action="/detail/deletewatch/<%= watch._id %>" method="POST" style="display:inline;">
+                                <button class="button is-danger" type="submit">Xóa</button>
+                            </form>
+                        </div>
+                        <% } %>
+                </div>
+            </div>
+
+            <!-- Rating and Comment Form -->
+
+            <div class="box">
+                <h2 class="title is-5">Leave a Rating and Comment</h2>
+
+                <% if(userHasCommented===true){%>
+                    <p>Bạn đã comment rồi</p>
+                    <%} else {%>
+                        <form action="/detail/<%= watch._id %>/comments" method="POST" id="commentForm">
+                            <div class="field">
+                                <label class="label">Rating</label>
+                                <div class="star-rating">
+                                    <input type="radio" id="5-stars" name="rating" value="5" />
+                                    <label for="5-stars" class="star">&#9733;</label>
+                                    <input type="radio" id="4-stars" name="rating" value="4" />
+                                    <label for="4-stars" class="star">&#9733;</label>
+                                    <input type="radio" id="3-stars" name="rating" value="3" />
+                                    <label for="3-stars" class="star">&#9733;</label>
+                                    <input type="radio" id="2-stars" name="rating" value="2" />
+                                    <label for="2-stars" class="star">&#9733;</label>
+                                    <input type="radio" id="1-star" name="rating" value="1" />
+                                    <label for="1-star" class="star">&#9733;</label>
+                                </div>
+                                <span id="ratingError" style="color: red; display: none;">Bạn phải đánh giá</span>
+                            </div>
+                            <div class="field">
+                                <label class="label">Comment</label>
+                                <div class="control">
+                                    <textarea class="textarea" name="content"
+                                        placeholder="Leave your comment here"></textarea>
+                                </div>
+                                <span id="commentError" style="color: red; display: none;">Bạn phải để lại bình
+                                    luận</span>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-link" type="submit">Đăng</button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="author" value="<%= user ? user._id : '' %>">
+                            <!-- Assuming you have user info in session -->
+                        </form>
+                        <% } %>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="box">
+                <h2 class="title is-5">Comments</h2>
+                <div class="content">
+                    <% comments.forEach(comment=> { %>
+                        <article class="media">
+                            <figure class="media-left">
+                                <p class="image is-64x64">
+                                    <img src="https://bulma.io/assets/images/placeholders/128x128.png"
+                                        alt="Placeholder image">
+                                </p>
+                            </figure>
+                            <div class="media-content">
+                                <div class="content">
+                                    <p>
+                                        <strong>
+                                            <%= comment.author.membername %>
+                                        </strong>
+                                        <br>
+                                        <strong>Rating:</strong>
+                                        <%= comment.rating %>
+                                            <br>
+                                            <%= comment.content %>
+                                    </p>
+                                </div>
+                                <nav class="level is-mobile">
+                                    <div class="level-left">
+                                        <a class="level-item">
+                                            <span class="icon is-small"><i class="fas fa-reply"></i></span>
+                                        </a>
+                                        <a class="level-item">
+                                            <span class="icon is-small"><i class="fas fa-retweet"></i></span>
+                                        </a>
+                                        <a class="level-item">
+                                            <span class="icon is-small"><i class="fas fa-heart"></i></span>
+                                        </a>
+                                    </div>
+                                </nav>
+                            </div>
+                            <% if (user && user.id===comment.author.id) { %>
+                                <div class="media-right">
+                                    <form action="/detail/deletecomment/<%= comment._id %>" method="POST"
+                                        style="display: inline;">
+                                        <button class="button is-danger" type="submit">Delete</button>
+                                    </form>
+                                    <button class="button is-warning edit-comment-button">Edit</button>
+
+                                </div>
+
+                                <div class="edit-comment-form" style="display: none;">
+                                    <form action="/detail/editcomment/<%= comment._id %>" method="POST">
+                                        <div class="field">
+                                            <label class="label">Rating</label>
+                                            <div class="star-rating">
+                                                <input type="radio" id="edit-5-stars-<%= comment._id %>" name="rating"
+                                                    value="5" />
+                                                <label for="edit-5-stars-<%= comment._id %>"
+                                                    class="star">&#9733;</label>
+                                                <input type="radio" id="edit-4-stars-<%= comment._id %>" name="rating"
+                                                    value="4" />
+                                                <label for="edit-4-stars-<%= comment._id %>"
+                                                    class="star">&#9733;</label>
+                                                <input type="radio" id="edit-3-stars-<%= comment._id %>" name="rating"
+                                                    value="3" />
+                                                <label for="edit-3-stars-<%= comment._id %>"
+                                                    class="star">&#9733;</label>
+                                                <input type="radio" id="edit-2-stars-<%= comment._id %>" name="rating"
+                                                    value="2" />
+                                                <label for="edit-2-stars-<%= comment._id %>"
+                                                    class="star">&#9733;</label>
+                                                <input type="radio" id="edit-1-star-<%= comment._id %>" name="rating"
+                                                    value="1" />
+                                                <label for="edit-1-star-<%= comment._id %>" class="star">&#9733;</label>
+                                            </div>
+                                            <span id="edit-ratingError-<%= comment._id %>"
+                                                style="color: red; display: none;">Bạn phải đánh giá</span>
+                                        </div>
+                                        <div class="field">
+                                            <label class="label">Comment</label>
+                                            <div class="control">
+                                                <textarea class="textarea" name="content"
+                                                    placeholder=""><%= comment.content%></textarea>
+                                            </div>
+                                            <span id="edit-commentError-<%= comment._id %>"
+                                                style="color: red; display: none;">Bạn phải để lại bình luận</span>
+                                        </div>
+                                        <div class="field">
+                                            <div class="control">
+                                                <button class="button is-link" type="submit">Update</button>
+                                                <button class="button cancel-edit-comment-button"
+                                                    type="button">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <% } %>
+                        </article>
+                        <% }); %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <% include('partials/footer.ejs') %>
+    </footer>
+
+    <!-- JavaScript to validate the form before submission -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const editCommentButtons = document.querySelectorAll('.edit-comment-button');
+            const editFormContainers = document.querySelectorAll('.edit-comment-form');
+            const cancelEditButtons = document.querySelectorAll('.cancel-edit-comment-button');
+            const ratingErrors = document.querySelectorAll('[id^="edit-ratingError"]');
+            const commentErrors = document.querySelectorAll('[id^="edit-commentError"]');
+            const commentContainers = document.querySelectorAll('.comment');
+
+            editCommentButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    // Hide other edit forms
+                    editFormContainers.forEach(form => form.style.display = 'none');
+
+                    // Display the clicked edit form
+                    editFormContainers[index].style.display = 'block';
+
+                    // Populate edit form with current comment data
+                    const currentComment = commentContainers[index];
+                    const currentRating = currentComment.querySelector('.comment-rating').textContent.trim();
+                    const currentContent = currentComment.querySelector('.comment-text').textContent.trim();
+                    const ratingInputs = editFormContainers[index].querySelectorAll('input[name="rating"]');
+                    ratingInputs.forEach(input => {
+                        if (input.value === currentRating) {
+                            input.checked = true;
+                        } else {
+                            input.checked = false;
+                        }
+                    });
+                    editFormContainers[index].querySelector('textarea[name="content"]').value = currentContent;
+                });
+            });
+
+            cancelEditButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    // Hide the edit form
+                    editFormContainers[index].style.display = 'none';
+                });
+            });
+
+            // Optional: Validate edit form before submission
+            editFormContainers.forEach((form, index) => {
+                form.addEventListener('submit', event => {
+                    const ratingInputs = form.querySelectorAll('input[name="rating"]');
+                    let ratingSelected = false;
+                    ratingInputs.forEach(input => {
+                        if (input.checked) {
+                            ratingSelected = true;
+                        }
+                    });
+                    if (!ratingSelected) {
+                        ratingErrors[index].style.display = 'block';
+                        event.preventDefault();
+                    } else {
+                        ratingErrors[index].style.display = 'none';
+                    }
+
+                    const commentTextarea = form.querySelector('textarea[name="content"]');
+                    if (commentTextarea.value.trim() === '') {
+                        commentErrors[index].style.display = 'block';
+                        event.preventDefault();
+                    } else {
+                        commentErrors[index].style.display = 'none';
+                    }
+                });
+            });
+        });
+
+    </script>
+</body>
+
+</html>
